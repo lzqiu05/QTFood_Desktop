@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="520.0" prefWidth="620.0" spacing="15.0"
+      alignment="TOP_CENTER"
+      style="-fx-background-color: rgba(255,255,255,0.06); -fx-background-radius: 15; -fx-padding: 20;"
+      xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.qtfood_desktop.Controlador.AgregarOfertaController">
+
+    <children>
+        <Label text="Añadir Nueva Oferta"
+               style="-fx-font-size: 22px; -fx-text-fill: black; -fx-font-weight: bold;" />
+
+        <!-- Buscador -->
+        <TextField fx:id="campoBusqueda" promptText="Buscar producto..."
+                   prefWidth="400.0"
+                   style="-fx-background-color: rgba(255,255,255,0.15);
+                          -fx-text-fill: black;
+                          -fx-prompt-text-fill: rgba(255,255,255,0.7);
+                          -fx-border-color: #D95F14;
+                          -fx-border-radius: 8;
+                          -fx-background-radius: 8;" />
+
+        <!-- Tabla de productos -->
+        <TableView fx:id="tablaProductos" prefHeight="200.0"
+                   style="-fx-background-color: rgba(255,255,255,0.1);
+                          -fx-border-color: #D95F14;
+                          -fx-border-radius: 10;
+                          -fx-background-radius: 10;" />
+
+        <!-- Campos de nueva oferta -->
+        <HBox spacing="10.0">
+            <Label text="Descuento (%)" style="-fx-text-fill: black;" />
+            <TextField fx:id="campoDescuento" promptText="Ej. 10"
+                       style="-fx-background-color: rgba(255,255,255,0.15);
+                              -fx-text-fill: black;
+                              -fx-prompt-text-fill: rgba(255,255,255,0.7);
+                              -fx-border-color: #D95F14;
+                              -fx-border-radius: 8;
+                              -fx-background-radius: 8;" />
+        </HBox>
+
+        <HBox spacing="10.0">
+            <Label text="Fecha Inicio" style="-fx-text-fill: black;" />
+            <DatePicker fx:id="pickerFechaInicio"
+                        style="-fx-background-color: rgba(255,255,255,0.15);
+                               -fx-border-color: #D95F14;
+                               -fx-border-radius: 8;
+                               -fx-background-radius: 8;
+                               -fx-text-fill: black;" />
+            <Label text="Fecha Fin" style="-fx-text-fill: black;" />
+            <DatePicker fx:id="pickerFechaFin"
+                        style="-fx-background-color: rgba(255,255,255,0.15);
+                               -fx-border-color: #D95F14;
+                               -fx-border-radius: 8;
+                               -fx-background-radius: 8;
+                               -fx-text-fill: black;" />
+        </HBox>
+
+        <!-- Descripción -->
+        <Label text="Descripción de la oferta"
+               style="-fx-text-fill: black;" />
+        <TextArea fx:id="campoDescripcion" prefRowCount="2" promptText="Escribe una descripción..."
+                  style="-fx-background-color: rgba(255,255,255,0.15);
+                         -fx-text-fill: black;
+                         -fx-prompt-text-fill: rgba(255,255,255,0.7);
+                         -fx-border-color: #D95F14;
+                         -fx-border-radius: 8;
+                         -fx-background-radius: 8;" />
+
+        <!-- Botones -->
+        <HBox alignment="CENTER_RIGHT" spacing="10.0">
+            <Button text="Cancelar" onAction="#onCancelar"
+                    style="-fx-background-color: transparent;
+                           -fx-border-color: #D95F14;
+                           -fx-text-fill: black;
+                           -fx-font-weight: bold;
+                           -fx-border-radius: 20;
+                           -fx-background-radius: 20;
+                           -fx-padding: 6 14;" />
+            <Button text="Guardar Oferta" onAction="#onGuardar"
+                    style="-fx-background-color: linear-gradient(to bottom, #A40000, #8B0000);
+                           -fx-text-fill: white;
+                           -fx-font-weight: bold;
+                           -fx-background-radius: 20;
+                           -fx-padding: 6 14;" />
+        </HBox>
+    </children>
+</VBox>

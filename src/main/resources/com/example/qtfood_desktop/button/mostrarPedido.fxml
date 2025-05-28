@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" prefHeight="552.0" prefWidth="412.0" spacing="10.0" style="-fx-padding: 20; -fx-background-color: white; -fx-font-family: 'Consolas';" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.qtfood_desktop.Controlador.MostrarPedidoController">
+
+    <children>
+        <Label style="-fx-font-size: 25px; -fx-font-weight: bold;" text="QTFOOD" textFill="#830f0f" underline="true" />
+      <HBox prefHeight="5.0" prefWidth="363.0" />
+        <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="*** TICKET DE PEDIDO ***" />
+        <Separator />
+
+        <Label fx:id="labelIdPedido" text="Pedido ID: 00123" />
+        <Label fx:id="labelFecha" text="Fecha: 01/05/2025" />
+        <Label fx:id="labelCliente" text="Cliente: Juan Pérez" />
+        <Separator />
+
+        <Label style="-fx-font-weight: bold;" text="Productos:" />
+        <ListView fx:id="listaProductos" prefHeight="266.0" prefWidth="258.0" />
+
+        <Separator />
+        <Label fx:id="labelTotal" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Total: 25.99 €" />
+        <Button onAction="#imprimir" prefHeight="35.0" prefWidth="129.0" style="-fx-background-color: linear-gradient(to bottom, #A40000, #8B0000);                        -fx-text-fill: white; -fx-background-radius: 20; -fx-font-weight: bold;" text="Imprimir Ticket" />
+    </children>
+</VBox>
