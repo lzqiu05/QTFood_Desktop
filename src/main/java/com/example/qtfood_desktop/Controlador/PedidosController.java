@@ -96,7 +96,6 @@ public class PedidosController {
 
         }
     }
-    // comennt
 
     @FXML
     private void initialize() {

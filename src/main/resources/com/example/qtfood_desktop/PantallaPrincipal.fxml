@@ -53,6 +53,17 @@
             <Button fx:id="btcambio111" onAction="#gestionarOferta" prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: white; -fx-text-fill: #7B0000; -fx-font-size: 14px; -fx-font-weight: bold;                            -fx-background-radius: 20;" text="OFERTAS" />
             <Button fx:id="btcambio1111" onAction="#gestionarUsuarios" prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: white; -fx-text-fill: #7B0000; -fx-font-size: 14px; -fx-font-weight: bold;                            -fx-background-radius: 20;" text="USUARIOS" />
             <Region prefHeight="49.0" prefWidth="124.0" />
+
+            <Button fx:id="btnBackup" onAction="#realizarCopiaDeSeguridad"
+                    prefHeight="40.0" prefWidth="130.0"
+                    style="-fx-background-color: white; -fx-text-fill: #7B0000; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 20;"
+                    text="Copia Seguridad" />
+
+            <Button fx:id="btnImportarBackup" onAction="#importarCopiaDeSeguridad"
+                    prefHeight="40.0" prefWidth="130.0"
+                    style="-fx-background-color: white; -fx-text-fill: #7B0000; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 20;"
+                    text="Importar Backup" />
+
          </children>
       </VBox>
    </left>

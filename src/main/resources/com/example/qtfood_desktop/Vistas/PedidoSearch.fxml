@@ -20,7 +20,7 @@
                -fx-border-color: #8B0000;
                -fx-border-width: 1.5;
                -fx-border-radius: 25;"
-                        text="Mostrar todos" />
+                        text="Mostrar pendientes" />
 
                 <DatePicker fx:id="FechaField" prefWidth="250.0" promptText="Selecciona la fecha" style="-fx-background-color: rgba(255,255,255,0.15);                            -fx-text-fill: white;                            -fx-prompt-text-fill: rgba(255,255,255,0.7);                            -fx-border-color: #D95F14;                            -fx-border-radius: 8;                            -fx-background-radius: 8;" />
 

@@ -13,6 +13,7 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
 import java.io.*;
@@ -20,6 +21,7 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static com.example.qtfood_desktop.Vista.App.mostrarAlerta;
@@ -29,7 +31,7 @@ public class pantallaPrincipalController {
     @FXML
     private BorderPane rootPane;
     @FXML
-    private MenuButton menuReservas;
+    private ProductosController productosController;
 
     @FXML
     private void gestionarPedido() throws IOException {
@@ -119,6 +121,97 @@ public class pantallaPrincipalController {
 
     public void cerrarSesion(ActionEvent actionEvent) throws IOException {
         App.setRoot("Login");
+    }
+
+
+    @FXML
+    private void realizarCopiaDeSeguridad(ActionEvent event) {
+        try {
+            LocalDate hoy = LocalDate.now();
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Guardar copia de seguridad");
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Archivo SQL", "*.sql")
+            );
+            fileChooser.setInitialFileName("Copia_seguridad.sql("+hoy+")");
+            fileChooser.setInitialDirectory(new File("C:\\Users\\Liang Zhi\\Desktop\\s\\Copias de seguridad"));
+            File file = fileChooser.showSaveDialog(((Node) event.getSource()).getScene().getWindow());
+            if (file == null) {
+                System.out.println("Operación cancelada por el usuario.");
+                return;
+            }
+
+            String filePath = file.getAbsolutePath();
+
+            String command = "\"C:\\xampp\\mysql\\bin\\mysqldump.exe\" -u root qtfood2 -r \"" + filePath + "\"";
+
+            Process process = Runtime.getRuntime().exec(command);
+            int exitCode = process.waitFor();
+
+            if (exitCode == 0) {
+                System.out.println("Copia de seguridad realizada en: " + filePath);
+            } else {
+                System.err.println("Error en la copia de seguridad");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @FXML
+    private void importarCopiaDeSeguridad(ActionEvent event) {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Seleccionar archivo de respaldo");
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Archivos SQL", "*.sql")
+            );
+            fileChooser.setInitialDirectory(new File("C:\\Users\\Liang Zhi\\Desktop\\s\\Copias de seguridad"));
+
+            File file = fileChooser.showOpenDialog(((Node) event.getSource()).getScene().getWindow());
+
+            if (file == null) {
+                System.out.println("Operación cancelada por el usuario.");
+                return;
+            }
+
+            String filePath = file.getAbsolutePath();
+
+            ProcessBuilder pb = new ProcessBuilder("C:\\xampp\\mysql\\bin\\mysql.exe", "-u", "root", "qtfood2");
+            Process process = pb.start();
+
+            // Abrimos el archivo .sql y lo enviamos al proceso mysql
+            try (OutputStream os = process.getOutputStream();
+                 FileInputStream fis = new FileInputStream(file)) {
+                byte[] buffer = new byte[1024];
+                int read;
+                while ((read = fis.read(buffer)) != -1) {
+                    os.write(buffer, 0, read);
+                }
+                os.flush();
+            }
+
+            int exitCode = process.waitFor();
+
+            if (exitCode == 0) {
+                System.out.println("Importación completada correctamente desde: " + filePath);
+            } else {
+                System.err.println("Error durante la importación. Código de salida: " + exitCode);
+
+                // Opcional: Leer el error de la consola
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        System.err.println(line);
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

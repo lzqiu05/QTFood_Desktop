@@ -134,6 +134,7 @@ public class ProductosController {
 
 
     private void cargarCategoria(){
+        categorias.clear();  // <-- Limpiar antes de cargar
         String sql = "SELECT * FROM categoria";
         try (Connection conexion = App.getConnection();
              PreparedStatement stmt = conexion.prepareStatement(sql)) {
@@ -417,5 +418,10 @@ public class ProductosController {
         secondStage.showAndWait();
     }
 
-
+    public void refrescarTableViews() {
+        cargarProductos();
+        cargarCategoria();
+        productosTableView.refresh();
+        categoriasTableView.refresh();
+    }
 }
