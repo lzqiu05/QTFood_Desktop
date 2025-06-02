@@ -10,6 +10,9 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,6 +27,7 @@ import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
+import javafx.util.Duration;
 
 import java.awt.*;
 import java.io.File;
@@ -89,6 +93,14 @@ public class ReservaController {
 
         searchNombreField.textProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
         searchFechaPicker.valueProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
+
+        Timeline refrescoAutomatico = new Timeline(
+                new KeyFrame(Duration.seconds(5), event -> {
+                    cargarReservas();
+                })
+        );
+        refrescoAutomatico.setCycleCount(Animation.INDEFINITE);
+        refrescoAutomatico.play();
     }
 
     private void crearTablaReservasConfirmadas() {

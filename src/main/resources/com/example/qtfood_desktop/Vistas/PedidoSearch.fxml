@@ -12,15 +12,7 @@
     <children>
         <HBox fx:id="contenedorBusqueda" alignment="CENTER" spacing="15.0">
             <children>
-                <Button onAction="#refrescarTabla" prefWidth="120.0"
-                        style="-fx-background-color: linear-gradient(to bottom, #5A0000, #3A0000);
-               -fx-text-fill: white;
-               -fx-font-weight: bold;
-               -fx-background-radius: 25;
-               -fx-border-color: #8B0000;
-               -fx-border-width: 1.5;
-               -fx-border-radius: 25;"
-                        text="Mostrar pendientes" />
+                <Button onAction="#refrescarTabla" prefHeight="29.0" prefWidth="144.0" style="-fx-background-color: linear-gradient(to bottom, #5A0000, #3A0000);                -fx-text-fill: white;                -fx-font-weight: bold;                -fx-background-radius: 25;                -fx-border-color: #8B0000;                -fx-border-width: 1.5;                -fx-border-radius: 25;" text="Refrescar" />
 
                 <DatePicker fx:id="FechaField" prefWidth="250.0" promptText="Selecciona la fecha" style="-fx-background-color: rgba(255,255,255,0.15);                            -fx-text-fill: white;                            -fx-prompt-text-fill: rgba(255,255,255,0.7);                            -fx-border-color: #D95F14;                            -fx-border-radius: 8;                            -fx-background-radius: 8;" />
 
@@ -36,9 +28,7 @@
         <VBox alignment="CENTER" spacing="100.0">
             <!-- El único TableView -->
             <TableView fx:id="tableView" prefHeight="500.0" prefWidth="400.0" style="-fx-background-color: rgba(255, 255, 255, 0.1);                           -fx-border-color: #D95F14;                           -fx-border-radius: 10;                           -fx-padding: 10;" />
-            <Button fx:id="exportarPDFButton" text="Descargar PDF (Pedidos realizados - Último mes)"
-                    onAction="#exportarPedidosFinalizadasPDF"
-                    style="-fx-background-color: #D95F14; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 16;" />
+            <Button fx:id="exportarPDFButton" onAction="#exportarPedidosFinalizadasPDF" style="-fx-background-color: #D95F14; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 16;" text="Descargar PDF (Pedidos realizados - Último mes)" />
             <HBox alignment="CENTER" prefHeight="86.0" prefWidth="660.0" spacing="20.0" style="-fx-background-color: rgba(255, 255, 255, 0.08); -fx-background-radius: 15; -fx-padding: 10;">
                 <children>
                     <Button fx:id="btnmostrar" onAction="#mostrar" prefHeight="45.0" prefWidth="133.0" style="-fx-background-color: linear-gradient(to bottom, #A40000, #8B0000); -fx-text-fill: white;                            -fx-font-weight: bold; -fx-background-radius: 25;" text="MOSTRAR PEDIDO" />

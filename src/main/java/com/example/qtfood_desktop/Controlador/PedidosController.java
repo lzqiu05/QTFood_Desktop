@@ -8,6 +8,9 @@ import com.lowagie.text.Font;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -22,6 +25,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.awt.*;
 import java.io.File;
@@ -48,16 +52,19 @@ public class PedidosController {
     private DatePicker FechaField;
     @FXML
     private ComboBox<String> estadoComboBox;
+    private boolean filtroActivo = false;
 
 
     @FXML
     private Button btnmostrar;
 
     private void rellenarTabla() {
+        if (filtroActivo) return;
         String sql = "SELECT p.*, u.nombre AS nombre_usuario " +
                 "FROM pedidos p " +
                 "JOIN usuarios u ON p.id_usuario = u.id_usuario " +
-                "WHERE p.fecha IS NOT NULL and estado = 'Pendiente'";
+                "WHERE DATE(p.fecha) = CURRENT_DATE AND estado = 'Pendiente' " +
+                "ORDER BY p.fecha DESC";
 
         try (Connection conexion= App.getConnection()){
 
@@ -100,9 +107,7 @@ public class PedidosController {
     @FXML
     private void initialize() {
         // Rellenar ComboBox con los estados del ENUM
-        estadoComboBox.getItems().addAll("pendiente", "enviado", "entregado", "cancelado");
-
-        estadoComboBox.getItems().add(0, "Todos");
+        estadoComboBox.getItems().addAll( "enviado", "entregado", "cancelado");
 
         crearTabla();
         tableView.setEditable(true);
@@ -133,6 +138,13 @@ public class PedidosController {
 
         rellenarTabla();
 
+        Timeline refrescoAutomatico = new Timeline(
+                new KeyFrame(Duration.seconds(5), event -> {
+                    rellenarTabla();
+                })
+        );
+        refrescoAutomatico.setCycleCount(Animation.INDEFINITE);
+        refrescoAutomatico.play();
 
     }
 
@@ -226,6 +238,7 @@ public class PedidosController {
 
     @FXML
     private void buscarPedidos() {
+        filtroActivo = true;
         String sql = "SELECT p.*, u.nombre AS nombre_usuario FROM pedidos p JOIN usuarios u ON p.id_usuario = u.id_usuario WHERE 1=1";
         List<Object> parametros = new ArrayList<>();
 
@@ -249,7 +262,7 @@ public class PedidosController {
 
 
         String estadoSeleccionado = estadoComboBox.getValue();
-        if (estadoSeleccionado != null && !"Todos".equals(estadoSeleccionado)) {
+        if (estadoSeleccionado != null ) {
             sql += " AND estado = ?";
             parametros.add(estadoSeleccionado);
         }
@@ -288,6 +301,11 @@ public class PedidosController {
 
 
     public void refrescarTabla(ActionEvent actionEvent) {
+        filtroActivo = false;
+        FechaField.setValue(null);
+        FechaField.getEditor().clear();
+        PrecioField.clear();
+        estadoComboBox.setValue(null); // o null si prefieres
         rellenarTabla();
 
     }
