@@ -65,7 +65,7 @@ public class ReservaController {
     private void initialize() {
         crearTablaReservasConfirmadas();
         crearTablaReservasPendientes();
-        cargarReservas();
+        cargarReservas2();
 
         reservasPendientesTableView.setEditable(true);
         reservasConfirmadasTableView.setEditable(true);
@@ -104,11 +104,16 @@ public class ReservaController {
             }
         });
         Timeline refrescoAutomatico = new Timeline(
-                new KeyFrame(Duration.seconds(5), event -> {
-                    cargarReservas();
-                    aplicarFiltros();
-                })
+            new KeyFrame(Duration.seconds(5), event -> {
+                if (searchNombreField.getText().isEmpty() && searchFechaPicker.getValue() == null) {
+                    cargarReservas2(); // ← refresca solo las de hoy si NO se está filtrando
+                } else {
+                    cargarTodasConfirmadas(); // ← si se está filtrando, carga todas
+                }
+                aplicarFiltros();
+            })
         );
+
         refrescoAutomatico.setCycleCount(Animation.INDEFINITE);
         refrescoAutomatico.play();
     }
@@ -252,15 +257,54 @@ public class ReservaController {
         }
 
 
+
     }
-    
+
+    private void cargarReservas2() {
+        reservasConfirmadas.clear();
+        reservasPendientes.clear();
+
+        String sql = "SELECT * FROM reserva WHERE estado = 'Confirmado' AND DATE(fecha) = ?";
+
+        try (Connection conexion = App.getConnection();
+             PreparedStatement stmt = conexion.prepareStatement(sql)) {
+
+            stmt.setDate(1, Date.valueOf(LocalDate.now()));  // ← solo confirmadas de hoy
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id_reserva");
+                    String nombre = rs.getString("nombre");
+                    String telefono = rs.getString("telefono");
+                    Timestamp ts = rs.getTimestamp("fecha");
+                    LocalDateTime fechaHora = ts.toLocalDateTime();
+                    int nPersonas = rs.getInt("n_personas");
+                    String estado = rs.getString("estado");
+
+                    Reserva reserva = new Reserva(id, nombre, telefono, fechaHora, nPersonas, estado);
+
+                    if (estado.equalsIgnoreCase("CONFIRMADO")) {
+                        reservasConfirmadas.add(reserva);
+                    } else if (estado.equalsIgnoreCase("Pendiente")) {
+                        reservasPendientes.add(reserva);
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void aplicarFiltros() {
         String filtroTexto = searchNombreField.getText().toLowerCase().trim();
         LocalDate filtroFecha = searchFechaPicker.getValue();
 
-        if (!filtroTexto.isEmpty() || filtroFecha != null) {
-            cargarTodasConfirmadas(); // una nueva función
+        if (filtroTexto.isEmpty() && filtroFecha == null) {
+             cargarReservas2(); // ← restaura solo las de hoy
+        } else {
+            cargarTodasConfirmadas(); // ← aplica filtro sobre todas
         }
 
         reservasConfirmadasFiltradas.setPredicate(reserva -> {
