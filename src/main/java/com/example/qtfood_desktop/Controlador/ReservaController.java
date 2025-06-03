@@ -59,6 +59,8 @@ public class ReservaController {
 
     private final FilteredList<Reserva> reservasConfirmadasFiltradas = new FilteredList<>(reservasConfirmadas, p -> true);
 
+    private boolean isFiltrado = false; 
+
     @FXML
     private void initialize() {
         crearTablaReservasConfirmadas();
@@ -92,11 +94,19 @@ public class ReservaController {
         reservasConfirmadasTableView.setItems(reservasConfirmadasFiltradas);
 
         searchNombreField.textProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
-        searchFechaPicker.valueProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
-
+        searchFechaPicker.valueProperty().addListener((obs, oldVal, newVal) -> {
+            aplicarFiltros();
+        });
+        searchFechaPicker.getEditor().textProperty().addListener((obs, oldText, newText) -> {
+            if (newText.trim().isEmpty()) {
+                searchFechaPicker.setValue(null); // Asegura que se borre el valor
+                aplicarFiltros();
+            }
+        });
         Timeline refrescoAutomatico = new Timeline(
                 new KeyFrame(Duration.seconds(5), event -> {
                     cargarReservas();
+                    aplicarFiltros();
                 })
         );
         refrescoAutomatico.setCycleCount(Animation.INDEFINITE);
@@ -243,42 +253,7 @@ public class ReservaController {
 
 
     }
-    private void cargarReservas2() {
-        reservasConfirmadas.clear();
-        reservasPendientes.clear();
-
-        String sql = "SELECT * FROM reserva WHERE estado = 'Pendiente' OR (estado = 'Confirmado' AND DATE(fecha) = ?)";
-
-        try (Connection conexion = App.getConnection();
-             PreparedStatement stmt = conexion.prepareStatement(sql)) {
-
-            stmt.setDate(1, Date.valueOf(LocalDate.now()));  // ← solo confirmadas de hoy
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    int id = rs.getInt("id_reserva");
-                    String nombre = rs.getString("nombre");
-                    String telefono = rs.getString("telefono");
-                    Timestamp ts = rs.getTimestamp("fecha");
-                    LocalDateTime fechaHora = ts.toLocalDateTime();
-                    int nPersonas = rs.getInt("n_personas");
-                    String estado = rs.getString("estado");
-
-                    Reserva reserva = new Reserva(id, nombre, telefono, fechaHora, nPersonas, estado);
-
-                    if (estado.equalsIgnoreCase("CONFIRMADO")) {
-                        reservasConfirmadas.add(reserva);
-                    } else if (estado.equalsIgnoreCase("Pendiente")) {
-                        reservasPendientes.add(reserva);
-                    }
-                }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
+    
 
     private void aplicarFiltros() {
         String filtroTexto = searchNombreField.getText().toLowerCase().trim();
