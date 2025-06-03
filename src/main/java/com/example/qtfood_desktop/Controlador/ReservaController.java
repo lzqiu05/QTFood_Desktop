@@ -38,6 +38,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ReservaController {
@@ -58,6 +59,7 @@ public class ReservaController {
     private final ObservableList<Reserva> reservasPendientes = FXCollections.observableArrayList();
 
     private final FilteredList<Reserva> reservasConfirmadasFiltradas = new FilteredList<>(reservasConfirmadas, p -> true);
+    private boolean filtroActivo = false;
 
     private boolean isFiltrado = false; 
 
@@ -65,7 +67,9 @@ public class ReservaController {
     private void initialize() {
         crearTablaReservasConfirmadas();
         crearTablaReservasPendientes();
-        cargarReservas2();
+        // Cargar las pendientes y confirmadas del día
+        cargarReservasConfirmadasHoy();
+
 
         reservasPendientesTableView.setEditable(true);
         reservasConfirmadasTableView.setEditable(true);
@@ -94,6 +98,8 @@ public class ReservaController {
         reservasConfirmadasTableView.setItems(reservasConfirmadasFiltradas);
 
         searchNombreField.textProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
+
+        searchNombreField.textProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
         searchFechaPicker.valueProperty().addListener((obs, oldVal, newVal) -> {
             aplicarFiltros();
         });
@@ -103,20 +109,23 @@ public class ReservaController {
                 aplicarFiltros();
             }
         });
+
         Timeline refrescoAutomatico = new Timeline(
-            new KeyFrame(Duration.seconds(5), event -> {
-                if (searchNombreField.getText().isEmpty() && searchFechaPicker.getValue() == null) {
-                    cargarReservas2(); // ← refresca solo las de hoy si NO se está filtrando
-                } else {
-                    cargarTodasConfirmadas(); // ← si se está filtrando, carga todas
-                }
-                aplicarFiltros();
-            })
+                new KeyFrame(Duration.seconds(5), event -> {
+                    boolean filtroActivo = !searchNombreField.getText().trim().isEmpty() || searchFechaPicker.getValue() != null;
+                    if (!filtroActivo) {
+                        cargarReservasConfirmadasHoy();
+                    }
+                  //  aplicarFiltros();
+                })
         );
 
         refrescoAutomatico.setCycleCount(Animation.INDEFINITE);
         refrescoAutomatico.play();
+
     }
+
+
 
     private void crearTablaReservasConfirmadas() {
         reservasConfirmadasTableView.getColumns().clear();
@@ -302,10 +311,11 @@ public class ReservaController {
         LocalDate filtroFecha = searchFechaPicker.getValue();
 
         if (filtroTexto.isEmpty() && filtroFecha == null) {
-             cargarReservas2(); // ← restaura solo las de hoy
+            cargarReservasConfirmadasHoy();
         } else {
-            cargarTodasConfirmadas(); // ← aplica filtro sobre todas
+            cargarTodasConfirmadas(); // ← solo las confirmadas para filtrar
         }
+
 
         reservasConfirmadasFiltradas.setPredicate(reserva -> {
             boolean coincideTexto = filtroTexto.isEmpty() ||
@@ -445,6 +455,15 @@ public class ReservaController {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Error al generar el PDF.");
             alert.show();
         }
+    }
+    private void cargarReservasConfirmadasHoy() {
+        cargarReservas(); // ← cargas ambas listas para mostrar en sus respectivas tablas
+
+        reservasConfirmadas.setAll(
+                reservasConfirmadas.stream()
+                        .filter(r -> r.getFechaHora().toLocalDate().equals(LocalDate.now()))
+                        .collect(Collectors.toList())
+        );
     }
 
 }
