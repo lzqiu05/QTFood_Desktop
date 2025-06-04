@@ -52,14 +52,16 @@ public class PedidosController {
     private DatePicker FechaField;
     @FXML
     private ComboBox<String> estadoComboBox;
+   // private boolean filtroActivo = false;
+    private Timeline refrescoAutomatico;
     private boolean filtroActivo = false;
+
 
 
     @FXML
     private Button btnmostrar;
 
     private void rellenarTabla() {
-        if (filtroActivo) return;
         String sql = "SELECT p.*, u.nombre AS nombre_usuario " +
                 "FROM pedidos p " +
                 "JOIN usuarios u ON p.id_usuario = u.id_usuario " +
@@ -138,9 +140,14 @@ public class PedidosController {
 
         rellenarTabla();
 
-        Timeline refrescoAutomatico = new Timeline(
-                new KeyFrame(Duration.seconds(5), event -> {
-                    rellenarTabla();
+        refrescoAutomatico = new Timeline(
+                new KeyFrame(Duration.seconds(5), event ->{
+                    System.out.println("Timeline ejecutándose... filtroActivo: " + filtroActivo);
+
+                    if (!filtroActivo) {
+                        rellenarTabla();
+                    }
+
                 })
         );
         refrescoAutomatico.setCycleCount(Animation.INDEFINITE);
@@ -190,6 +197,7 @@ public class PedidosController {
             String nuevoEstado = event.getNewValue();
             pedido.setEstado(nuevoEstado); // Actualiza el objeto en memoria
             actualizarEstadoEnBD(pedido.getIdPedido(), nuevoEstado); // Llama a un método que actualiza la BD
+            datos.remove(pedido);
         });
 
         colIDPedido.prefWidthProperty().bind(tableView.widthProperty().multiply(0.10));
@@ -239,9 +247,19 @@ public class PedidosController {
     @FXML
     private void buscarPedidos() {
         filtroActivo = true;
+        refrescoAutomatico.stop();
+        boolean fechaVacia = FechaField.getValue() == null || FechaField.getEditor().getText().isEmpty();
+        boolean precioVacio = PrecioField.getText().isEmpty();
+        boolean estadoVacio = estadoComboBox.getValue() == null;
+
+
         String sql = "SELECT p.*, u.nombre AS nombre_usuario FROM pedidos p JOIN usuarios u ON p.id_usuario = u.id_usuario WHERE 1=1";
         List<Object> parametros = new ArrayList<>();
 
+        if (fechaVacia && precioVacio && estadoVacio) {
+            new Alert(Alert.AlertType.WARNING, "Debes introducir al menos un criterio de búsqueda.").show();
+            return;
+        }
         LocalDate fechaSeleccionada = FechaField.getValue();
         if (fechaSeleccionada != null && !FechaField.getEditor().getText().isEmpty()) {
             sql += " AND DATE(fecha) = ?";
@@ -252,8 +270,10 @@ public class PedidosController {
         if (!PrecioField.getText().isEmpty()) {
             try {
                 double precio = Double.parseDouble(PrecioField.getText());
-                sql += " AND total LIKE ?";
-                parametros.add(precio + "%");
+                sql += " AND total BETWEEN ? AND ?";
+                parametros.add(precio);
+                parametros.add(precio + 0.99);
+
             } catch (NumberFormatException e) {
                 System.out.println("Precio inválido");
                 return;
@@ -291,8 +311,6 @@ public class PedidosController {
             }
 
             tableView.setItems(datos);
-            FechaField.setValue(null);
-            FechaField.getEditor().clear();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -307,6 +325,7 @@ public class PedidosController {
         PrecioField.clear();
         estadoComboBox.setValue(null); // o null si prefieres
         rellenarTabla();
+        refrescoAutomatico.play();
 
     }
     public void exportarPedidosFinalizadasPDF(ActionEvent actionEvent) {

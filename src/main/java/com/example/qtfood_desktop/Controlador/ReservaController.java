@@ -55,19 +55,19 @@ public class ReservaController {
     @FXML
     private DatePicker searchFechaPicker;
 
-    private final ObservableList<Reserva> reservasConfirmadas = FXCollections.observableArrayList();
+    private final ObservableList<Reserva> reservasConfirmadasHoy = FXCollections.observableArrayList();
     private final ObservableList<Reserva> reservasPendientes = FXCollections.observableArrayList();
+    private final ObservableList<Reserva> reservasConfirmadas = FXCollections.observableArrayList();
+
 
     private final FilteredList<Reserva> reservasConfirmadasFiltradas = new FilteredList<>(reservasConfirmadas, p -> true);
-    private boolean filtroActivo = false;
 
-    private boolean isFiltrado = false; 
 
     @FXML
     private void initialize() {
         crearTablaReservasConfirmadas();
         crearTablaReservasPendientes();
-        // Cargar las pendientes y confirmadas del día
+        cargarReservasPendientes();
         cargarReservasConfirmadasHoy();
 
 
@@ -95,10 +95,7 @@ public class ReservaController {
             }
         });
 
-        reservasConfirmadasTableView.setItems(reservasConfirmadasFiltradas);
-
-        searchNombreField.textProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
-
+        reservasConfirmadasTableView.setItems(reservasConfirmadasHoy); // por defecto, muestra HOY
         searchNombreField.textProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
         searchFechaPicker.valueProperty().addListener((obs, oldVal, newVal) -> {
             aplicarFiltros();
@@ -109,56 +106,61 @@ public class ReservaController {
                 aplicarFiltros();
             }
         });
-
         Timeline refrescoAutomatico = new Timeline(
-                new KeyFrame(Duration.seconds(5), event -> {
+                new KeyFrame(Duration.seconds(10), event -> {
                     boolean filtroActivo = !searchNombreField.getText().trim().isEmpty() || searchFechaPicker.getValue() != null;
                     if (!filtroActivo) {
                         cargarReservasConfirmadasHoy();
+                        cargarReservasPendientes();
                     }
-                  //  aplicarFiltros();
+                    //  aplicarFiltros();
                 })
         );
-
         refrescoAutomatico.setCycleCount(Animation.INDEFINITE);
         refrescoAutomatico.play();
-
     }
-
 
 
     private void crearTablaReservasConfirmadas() {
         reservasConfirmadasTableView.getColumns().clear();
 
+
         TableColumn<Reserva, String> colNombre = new TableColumn<>("Nombre");
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+
 
         TableColumn<Reserva, String> colTelefono = new TableColumn<>("Teléfono");
         colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
 
+
         TableColumn<Reserva, String> colFecha = new TableColumn<>("Fecha");
         colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaSolo"));
 
+
         TableColumn<Reserva, String> colHora = new TableColumn<>("Hora");
         colHora.setCellValueFactory(new PropertyValueFactory<>("horaSolo"));
+
 
         TableColumn<Reserva, Integer> colNPersonas = new TableColumn<>("Nº Personas");
         colNPersonas.setCellValueFactory(new PropertyValueFactory<>("nPersonas"));
         TableColumn<Reserva, String> colEstado = new TableColumn<>("Estado");
         colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
-        colEstado.setCellFactory(ComboBoxTableCell.forTableColumn("Confirmado", "Finalizado", "Cacelado"));
+        colEstado.setCellFactory(ComboBoxTableCell.forTableColumn("Confirmado", "Finalizado", "Cancelado"));
         colEstado.setOnEditCommit(event -> {
             Reserva reserva = event.getRowValue();
             String nuevoEstado = event.getNewValue();
             reserva.setEstado(nuevoEstado); // Actualiza el objeto en memoria
             actualizarEstadoEnBD(reserva.getIdReserva(), nuevoEstado);
 
+
             // Si ya no está "Confirmado", quítalo de esta lista
             if (!nuevoEstado.equalsIgnoreCase("Confirmado")) {
+                reservasConfirmadasHoy.remove(reserva);
                 reservasConfirmadas.remove(reserva);
+
+
             }
         });
-
 
         colNombre.prefWidthProperty().bind(reservasPendientesTableView.widthProperty().multiply(0.15));
         colTelefono.prefWidthProperty().bind(reservasPendientesTableView.widthProperty().multiply(0.15));
@@ -168,9 +170,10 @@ public class ReservaController {
         colEstado.prefWidthProperty().bind(reservasPendientesTableView.widthProperty().multiply(0.15));
 
         reservasConfirmadasTableView.getColumns().addAll(colNombre, colTelefono, colFecha, colHora, colNPersonas,colEstado);
-        reservasConfirmadasTableView.setItems(reservasConfirmadas);
+        reservasConfirmadasTableView.setItems(reservasConfirmadasHoy);
 
     }
+
 
     private void crearTablaReservasPendientes() {
         reservasPendientesTableView.getColumns().clear();
@@ -202,13 +205,16 @@ public class ReservaController {
             // Si ya no está "Pendiente", quítalo de esta lista
             if (!nuevoEstado.equalsIgnoreCase("Pendiente")) {
                 reservasPendientes.remove(reserva);
-
-                if (nuevoEstado.equalsIgnoreCase("Confirmado")) {
-                    reservasConfirmadas.add(reserva);
+                if (nuevoEstado.equalsIgnoreCase("Confirmado") ) {
+                    if (!reservasConfirmadas.contains(reserva)) reservasConfirmadas.add(reserva);
+                    if (reserva.getFechaHora().toLocalDate().equals(LocalDate.now())) {
+                        reservasConfirmadasHoy.add(reserva);
+                    }
+                    // Si estás en modo de filtro activo, actualiza la vista
+                    aplicarFiltros();
                 }
             }
         });
-
 
         colNombre.prefWidthProperty().bind(reservasPendientesTableView.widthProperty().multiply(0.15));
         colTelefono.prefWidthProperty().bind(reservasPendientesTableView.widthProperty().multiply(0.15));
@@ -220,6 +226,7 @@ public class ReservaController {
         reservasPendientesTableView.getColumns().addAll(colNombre, colTelefono, colFecha, colHora, colNPersonas, colEstado);
         reservasPendientesTableView.setItems(reservasPendientes);
     }
+
 
     private void actualizarEstadoEnBD(int idReserva, String nuevoEstado) {
         String sql = "UPDATE Reserva SET estado = ? WHERE id_reserva = ?";
@@ -233,11 +240,9 @@ public class ReservaController {
         }
     }
 
-    private void cargarReservas() {
-        reservasConfirmadas.clear();
+    private void cargarReservasPendientes() {
         reservasPendientes.clear();
-
-        String sql = "SELECT * FROM reserva";
+        String sql = "SELECT * FROM reserva WHERE estado = 'Pendiente'";
 
         try (Connection conexion = App.getConnection();
              PreparedStatement stmt = conexion.prepareStatement(sql);
@@ -252,33 +257,29 @@ public class ReservaController {
                 int nPersonas = rs.getInt("n_personas");
                 String estado = rs.getString("estado");
 
-                Reserva reserva = new Reserva(id, nombre, telefono, fechaHora, nPersonas, estado);
 
-                if (estado.equalsIgnoreCase("CONFIRMADO")) {
-                    reservasConfirmadas.add(reserva);
-                } else if (estado.equalsIgnoreCase("Pendiente")){
-                    reservasPendientes.add(reserva);
-                }
+                Reserva reserva = new Reserva(id, nombre, telefono, fechaHora, nPersonas, estado);
+                reservasPendientes.add(reserva);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-
-
     }
 
-    private void cargarReservas2() {
-        reservasConfirmadas.clear();
-        reservasPendientes.clear();
 
+    private void cargarReservasConfirmadasHoy() {
+        reservasConfirmadasHoy.clear();
         String sql = "SELECT * FROM reserva WHERE estado = 'Confirmado' AND DATE(fecha) = ?";
+
 
         try (Connection conexion = App.getConnection();
              PreparedStatement stmt = conexion.prepareStatement(sql)) {
 
-            stmt.setDate(1, Date.valueOf(LocalDate.now()));  // ← solo confirmadas de hoy
+
+            stmt.setDate(1, Date.valueOf(LocalDate.now()));
+
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -290,15 +291,16 @@ public class ReservaController {
                     int nPersonas = rs.getInt("n_personas");
                     String estado = rs.getString("estado");
 
+
                     Reserva reserva = new Reserva(id, nombre, telefono, fechaHora, nPersonas, estado);
 
-                    if (estado.equalsIgnoreCase("CONFIRMADO")) {
-                        reservasConfirmadas.add(reserva);
-                    } else if (estado.equalsIgnoreCase("Pendiente")) {
-                        reservasPendientes.add(reserva);
-                    }
+
+                    reservasConfirmadasHoy.add(reserva);
+
+
                 }
             }
+
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -306,25 +308,27 @@ public class ReservaController {
     }
 
 
+
     private void aplicarFiltros() {
-        String filtroTexto = searchNombreField.getText().toLowerCase().trim();
-        LocalDate filtroFecha = searchFechaPicker.getValue();
+        String texto = searchNombreField.getText().toLowerCase().trim();
+        LocalDate fecha = searchFechaPicker.getValue();
 
-        if (filtroTexto.isEmpty() && filtroFecha == null) {
-            cargarReservasConfirmadasHoy();
+        boolean hayFiltro = !texto.isEmpty() || fecha != null;
+        if (hayFiltro) {
+            if (reservasConfirmadas.isEmpty()) {
+                cargarTodasConfirmadas(); // carga solo una vez si está vacía
+            }
+            reservasConfirmadasFiltradas.setPredicate(r -> {
+                boolean coincideTexto = texto.isEmpty() || r.getNombre().toLowerCase().contains(texto) || r.getTelefono().toLowerCase().contains(texto);
+                boolean coincideFecha = (fecha == null) || r.getFechaHora().toLocalDate().equals(fecha);
+                return coincideTexto && coincideFecha;
+            });
+            reservasConfirmadasTableView.setItems(reservasConfirmadasFiltradas);
         } else {
-            cargarTodasConfirmadas(); // ← solo las confirmadas para filtrar
+            reservasConfirmadasTableView.setItems(reservasConfirmadasHoy);
         }
-
-
-        reservasConfirmadasFiltradas.setPredicate(reserva -> {
-            boolean coincideTexto = filtroTexto.isEmpty() ||
-                    reserva.getNombre().toLowerCase().contains(filtroTexto) ||
-                    reserva.getTelefono().toLowerCase().contains(filtroTexto);
-            boolean coincideFecha = (filtroFecha == null) || reserva.getFechaHora().toLocalDate().equals(filtroFecha);
-            return coincideTexto && coincideFecha;
-        });
     }
+
 
 
     private void cargarTodasConfirmadas() {
@@ -345,15 +349,14 @@ public class ReservaController {
                 int nPersonas = rs.getInt("n_personas");
                 String estado = rs.getString("estado");
 
+
                 Reserva reserva = new Reserva(id, nombre, telefono, fechaHora, nPersonas, estado);
                 reservasConfirmadas.add(reserva);
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
 
     public void exportarReservasFinalizadasPDF(ActionEvent actionEvent) {
         LocalDate hoy = LocalDate.now();
@@ -365,7 +368,7 @@ public class ReservaController {
         List<Reserva> reservasFinalizadas = new ArrayList<>();
 
         try (Connection conexion = App.getConnection();
-             PreparedStatement stmt = conexion.prepareStatement(sql)) {
+            PreparedStatement stmt = conexion.prepareStatement(sql)) {
             stmt.setTimestamp(1, Timestamp.valueOf(haceUnMes.atStartOfDay()));
             stmt.setTimestamp(2, Timestamp.valueOf(hoy.atTime(23, 59)));
 
@@ -456,14 +459,14 @@ public class ReservaController {
             alert.show();
         }
     }
-    private void cargarReservasConfirmadasHoy() {
-        cargarReservas(); // ← cargas ambas listas para mostrar en sus respectivas tablas
 
-        reservasConfirmadas.setAll(
-                reservasConfirmadas.stream()
-                        .filter(r -> r.getFechaHora().toLocalDate().equals(LocalDate.now()))
-                        .collect(Collectors.toList())
-        );
+
+    public void refrescarTabla(ActionEvent actionEvent) {
+        searchFechaPicker.setValue(null);
+        searchFechaPicker.getEditor().clear();
+        searchNombreField.setText("");
+        cargarReservasConfirmadasHoy();
+        cargarReservasPendientes();
+
     }
-
 }
