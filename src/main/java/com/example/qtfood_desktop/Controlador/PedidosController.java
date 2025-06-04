@@ -42,7 +42,7 @@ import java.util.stream.Stream;
 
 import static com.example.qtfood_desktop.Vista.App.loadFXML;
 
-public class PedidosController {
+public class PedidosController implements RefreshableController {
     private static ObservableList<Pedido> datos= FXCollections.observableArrayList();
     @FXML
     private TableView tableView;
@@ -53,14 +53,24 @@ public class PedidosController {
     @FXML
     private ComboBox<String> estadoComboBox;
    // private boolean filtroActivo = false;
-    private Timeline refrescoAutomatico;
+    public Timeline refrescoAutomatico;
     private boolean filtroActivo = false;
-
-
-
     @FXML
     private Button btnmostrar;
 
+    @Override
+    public void activar() {
+        if (!filtroActivo && refrescoAutomatico != null) {
+            refrescoAutomatico.play();
+        }
+    }
+
+    @Override
+    public void desactivar() {
+        if (refrescoAutomatico != null) {
+            refrescoAutomatico.stop();
+        }
+    }
     private void rellenarTabla() {
         String sql = "SELECT p.*, u.nombre AS nombre_usuario " +
                 "FROM pedidos p " +
@@ -112,6 +122,7 @@ public class PedidosController {
         estadoComboBox.getItems().addAll( "enviado", "entregado", "cancelado");
 
         crearTabla();
+        rellenarTabla();
         tableView.setEditable(true);
         btnmostrar.setVisible(false);
 
@@ -138,20 +149,19 @@ public class PedidosController {
             }
         });
 
-        rellenarTabla();
 
         refrescoAutomatico = new Timeline(
-                new KeyFrame(Duration.seconds(5), event ->{
-                    System.out.println("Timeline ejecutándose... filtroActivo: " + filtroActivo);
-
+                new KeyFrame(Duration.seconds(5), event -> {
                     if (!filtroActivo) {
                         rellenarTabla();
+                    } else {
+                        refrescoAutomatico.stop(); // Autodetención
                     }
-
                 })
         );
         refrescoAutomatico.setCycleCount(Animation.INDEFINITE);
-        refrescoAutomatico.play();
+
+
 
     }
 
@@ -247,7 +257,6 @@ public class PedidosController {
     @FXML
     private void buscarPedidos() {
         filtroActivo = true;
-        refrescoAutomatico.stop();
         boolean fechaVacia = FechaField.getValue() == null || FechaField.getEditor().getText().isEmpty();
         boolean precioVacio = PrecioField.getText().isEmpty();
         boolean estadoVacio = estadoComboBox.getValue() == null;
@@ -323,9 +332,11 @@ public class PedidosController {
         FechaField.setValue(null);
         FechaField.getEditor().clear();
         PrecioField.clear();
-        estadoComboBox.setValue(null); // o null si prefieres
+        estadoComboBox.setValue(null);
         rellenarTabla();
-        refrescoAutomatico.play();
+        if (refrescoAutomatico != null) {
+            refrescoAutomatico.play();
+        }
 
     }
     public void exportarPedidosFinalizadasPDF(ActionEvent actionEvent) {

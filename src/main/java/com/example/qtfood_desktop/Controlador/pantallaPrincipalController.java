@@ -30,8 +30,8 @@ public class pantallaPrincipalController {
 
     @FXML
     private BorderPane rootPane;
-    @FXML
-    private ProductosController productosController;
+    private RefreshableController controllerActual;
+
 
     @FXML
     private void gestionarPedido() throws IOException {
@@ -64,10 +64,23 @@ public class pantallaPrincipalController {
 
     }
     private void loadFXML(URL url) throws IOException {
+        // Desactivar el controlador actual si existe
+        if (controllerActual != null) {
+            controllerActual.desactivar();
+        }
 
         FXMLLoader loader = new FXMLLoader(url);
-        rootPane.setCenter(loader.load());
+        Node vista = loader.load();
+        rootPane.setCenter(vista);
 
+        // Configurar el nuevo controlador si es Refreshable
+        Object controller = loader.getController();
+        if (controller instanceof RefreshableController) {
+            controllerActual = (RefreshableController) controller;
+            controllerActual.activar();
+        } else {
+            controllerActual = null;
+        }
     }
 
     public void setBottom(Node nodo) {

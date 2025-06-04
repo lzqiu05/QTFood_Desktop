@@ -10,7 +10,7 @@
 
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
-<BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="573.0" prefWidth="800.0" style="-fx-background-color: linear-gradient(to bottom right, #7B0000, #BF9071); -fx-padding: 20;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.qtfood_desktop.Controlador.pantallaPrincipalController">
+<BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="573.0" prefWidth="800.0" style="-fx-background-color: linear-gradient(to bottom right, #7B0000, #BF9071); -fx-padding: 20;" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.qtfood_desktop.Controlador.pantallaPrincipalController">
 
    <!-- Barra superior -->
    <top>

@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <?import javafx.scene.image.Image?>
-<VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="800.0" spacing="20" style="-fx-background-color: linear-gradient(to bottom right, #7B0000, #BF9071); -fx-padding: 20;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.qtfood_desktop.Controlador.AñadirProductoController">
+<VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="800.0" spacing="20" style="-fx-background-color: linear-gradient(to bottom right, #7B0000, #BF9071); -fx-padding: 20;" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.qtfood_desktop.Controlador.AñadirProductoController">
 
     <children>
         <!-- Botón de salida

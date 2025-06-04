@@ -9,7 +9,7 @@
 <?import javafx.scene.control.Separator?>
 
 <?import javafx.scene.control.Button?>
-<VBox alignment="TOP_CENTER" spacing="20.0" style="-fx-padding: 10;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.qtfood_desktop.Controlador.ReservaController">
+<VBox alignment="TOP_CENTER" spacing="20.0" style="-fx-padding: 10;" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.qtfood_desktop.Controlador.ReservaController">
 
     <!-- Sección de Reservas Confirmadas -->
     <VBox alignment="TOP_CENTER" spacing="10.0" VBox.vgrow="ALWAYS">

@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ReservaController {
+public class ReservaController implements RefreshableController {
 
     @FXML
     private TableView<Reserva> reservasConfirmadasTableView;
@@ -63,6 +63,24 @@ public class ReservaController {
     private final FilteredList<Reserva> reservasConfirmadasFiltradas = new FilteredList<>(reservasConfirmadas, p -> true);
     public Timeline refrescoAutomatico;
 
+    @Override
+    public void activar() {
+        boolean hayFiltros = !searchNombreField.getText().trim().isEmpty() ||
+                searchFechaPicker.getValue() != null;
+
+        if (!hayFiltros && refrescoAutomatico != null) {
+            refrescoAutomatico.play();
+            System.out.println("Timeline de reservas ACTIVADO");
+        }
+    }
+
+    @Override
+    public void desactivar() {
+        if (refrescoAutomatico != null) {
+            refrescoAutomatico.stop();
+            System.out.println("Timeline de reservas DESACTIVADO");
+        }
+    }
     @FXML
     private void initialize() {
         crearTablaReservasConfirmadas();
@@ -112,11 +130,12 @@ public class ReservaController {
                     new KeyFrame(Duration.seconds(10), event -> {
                         cargarReservasConfirmadasHoy();
                         cargarReservasPendientes();
-                        //  aplicarFiltros();
+                        // aplicarFiltros();
                     })
             );
+            System.out.println("reserva timeline activo");
+
             refrescoAutomatico.setCycleCount(Animation.INDEFINITE);
-            refrescoAutomatico.play();
         }
 
     }
@@ -311,7 +330,6 @@ public class ReservaController {
 
 
     private void aplicarFiltros() {
-        refrescoAutomatico.stop();
         String texto = searchNombreField.getText().toLowerCase().trim();
         LocalDate fecha = searchFechaPicker.getValue();
 
@@ -464,7 +482,6 @@ public class ReservaController {
 
 
     public void refrescarTabla(ActionEvent actionEvent) {
-        refrescoAutomatico.play();
         searchFechaPicker.setValue(null);
         searchFechaPicker.getEditor().clear();
         searchNombreField.setText("");

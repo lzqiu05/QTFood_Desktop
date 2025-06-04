@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="TOP_CENTER" spacing="20.0" style="-fx-padding: 10;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.qtfood_desktop.Controlador.OfertaController">
+<VBox alignment="TOP_CENTER" spacing="20.0" style="-fx-padding: 10;" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.qtfood_desktop.Controlador.OfertaController">
     <children>
         <HBox fx:id="contenedorBusqueda" alignment="CENTER" spacing="15.0">
             <children>

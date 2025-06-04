@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" prefHeight="552.0" prefWidth="412.0" spacing="10.0" style="-fx-padding: 20; -fx-background-color: white; -fx-font-family: 'Consolas';" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.qtfood_desktop.Controlador.MostrarPedidoController">
+<VBox alignment="CENTER" prefHeight="552.0" prefWidth="412.0" spacing="10.0" style="-fx-padding: 20; -fx-background-color: white; -fx-font-family: 'Consolas';" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.qtfood_desktop.Controlador.MostrarPedidoController">
 
     <children>
         <Label style="-fx-font-size: 25px; -fx-font-weight: bold;" text="QTFOOD" textFill="#830f0f" underline="true" />
