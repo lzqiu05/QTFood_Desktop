@@ -61,7 +61,7 @@ public class ReservaController {
 
 
     private final FilteredList<Reserva> reservasConfirmadasFiltradas = new FilteredList<>(reservasConfirmadas, p -> true);
-
+    public Timeline refrescoAutomatico;
 
     @FXML
     private void initialize() {
@@ -106,18 +106,19 @@ public class ReservaController {
                 aplicarFiltros();
             }
         });
-        Timeline refrescoAutomatico = new Timeline(
-                new KeyFrame(Duration.seconds(10), event -> {
-                    boolean filtroActivo = !searchNombreField.getText().trim().isEmpty() || searchFechaPicker.getValue() != null;
-                    if (!filtroActivo) {
+        boolean filtroActivo = !searchNombreField.getText().trim().isEmpty() || searchFechaPicker.getValue() != null;
+        if (!filtroActivo) {
+            refrescoAutomatico = new Timeline(
+                    new KeyFrame(Duration.seconds(10), event -> {
                         cargarReservasConfirmadasHoy();
                         cargarReservasPendientes();
-                    }
-                    //  aplicarFiltros();
-                })
-        );
-        refrescoAutomatico.setCycleCount(Animation.INDEFINITE);
-        refrescoAutomatico.play();
+                        //  aplicarFiltros();
+                    })
+            );
+            refrescoAutomatico.setCycleCount(Animation.INDEFINITE);
+            refrescoAutomatico.play();
+        }
+
     }
 
 
@@ -310,6 +311,7 @@ public class ReservaController {
 
 
     private void aplicarFiltros() {
+        refrescoAutomatico.stop();
         String texto = searchNombreField.getText().toLowerCase().trim();
         LocalDate fecha = searchFechaPicker.getValue();
 
@@ -462,6 +464,7 @@ public class ReservaController {
 
 
     public void refrescarTabla(ActionEvent actionEvent) {
+        refrescoAutomatico.play();
         searchFechaPicker.setValue(null);
         searchFechaPicker.getEditor().clear();
         searchNombreField.setText("");
