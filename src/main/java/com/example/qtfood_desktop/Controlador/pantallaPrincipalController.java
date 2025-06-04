@@ -120,7 +120,15 @@ public class pantallaPrincipalController {
     }
 
     public void cerrarSesion(ActionEvent actionEvent) throws IOException {
-        App.setRoot("Login");
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmar cierre de sesión");
+        alert.setHeaderText(null);
+        alert.setContentText("¿Estás seguro de que deseas cerrar sesión?");
+    
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            App.setRoot("Login");
+        }
     }
 
 
