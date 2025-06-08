@@ -22,7 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.qtfood_desktop.Vista.App.loadFXML;
-
+/**
+ * Controlador de la vista de usuarios y pedidos.
+ * Permite buscar pedidos por correo, fecha y estado, y mostrar detalles de un pedido seleccionado.
+ */
 public class UsuariosController {
     private static ObservableList<Pedido> datos = FXCollections.observableArrayList();
 

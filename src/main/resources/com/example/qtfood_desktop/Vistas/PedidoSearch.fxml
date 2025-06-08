@@ -19,7 +19,7 @@
                 <TextField fx:id="PrecioField" prefWidth="250.0" promptText="Introduce el precio total" style="-fx-background-color: rgba(255,255,255,0.15);                           -fx-text-fill: white;                           -fx-prompt-text-fill: rgba(255,255,255,0.7);                           -fx-border-color: #D95F14;                           -fx-border-radius: 8;                           -fx-background-radius: 8;" />
 
                 <!-- Nuevo ComboBox para estado -->
-                <ComboBox fx:id="estadoComboBox" prefWidth="200.0" promptText="Estado" style="-fx-background-color: rgba(255,255,255,0.15);                          -fx-text-fill: white;                          -fx-prompt-text-fill: rgba(255,255,255,0.7);                          -fx-border-color: #D95F14;                          -fx-border-radius: 8;                          -fx-background-radius: 8;" />
+                <ComboBox fx:id="estadoComboBox" prefWidth="200.0" style="-fx-background-color: rgba(255,255,255,0.15);                          -fx-text-fill: white;                          -fx-prompt-text-fill: rgba(255,255,255,0.7);                          -fx-border-color: #D95F14;                          -fx-border-radius: 8;                          -fx-background-radius: 8;" />
 
                 <Button fx:id="btnBuscar" onAction="#buscarPedidos" prefWidth="120.0" style="-fx-background-color: linear-gradient(to bottom, #A40000, #8B0000);                        -fx-text-fill: white;                        -fx-font-weight: bold;                        -fx-background-radius: 25;" text="Buscar" />
             </children>

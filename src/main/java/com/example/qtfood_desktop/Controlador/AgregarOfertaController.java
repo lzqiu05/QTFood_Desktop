@@ -15,7 +15,14 @@ import java.time.LocalDate;
 import java.util.stream.Collectors;
 
 import static com.example.qtfood_desktop.Vista.App.mostrarAlerta;
-
+/**
+ * Controlador para la ventana de creación de nuevas ofertas.
+ * <p>
+ * Permite buscar y seleccionar productos, ingresar detalles de la oferta,
+ * validar datos y guardar la oferta en la base de datos.
+ * Además, notifica a {@link OfertaController} para refrescar la vista principal.
+ * </p>
+ */
 public class AgregarOfertaController {
 
     @FXML private TextField campoBusqueda;

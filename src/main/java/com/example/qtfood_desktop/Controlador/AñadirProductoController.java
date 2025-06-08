@@ -20,7 +20,14 @@ import java.sql.*;
 import java.util.UUID;
 
 import static com.example.qtfood_desktop.Vista.App.mostrarAlerta;
-
+/**
+ * Controlador para la interfaz de añadir un nuevo producto.
+ * <p>
+ * Permite ingresar los datos del producto, seleccionar una imagen,
+ * validar campos y guardar el producto en la base de datos.
+ * También notifica a {@link ProductosController} para refrescar la tabla de productos.
+ * </p>
+ */
 public class AñadirProductoController {
     @FXML private TextField nombreField;
     @FXML private TextArea descripcionField;

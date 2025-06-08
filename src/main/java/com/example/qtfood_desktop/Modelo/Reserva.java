@@ -2,7 +2,10 @@ package com.example.qtfood_desktop.Modelo;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
+/**
+ * Representa una reserva realizada por un cliente para una fecha y hora determinadas.
+ * Incluye información del cliente, número de personas, y el estado de la reserva.
+ */
 public class Reserva {
     private int idReserva;
     private String nombre;

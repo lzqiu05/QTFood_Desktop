@@ -17,7 +17,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
-
+/**
+ * Controlador encargado de mostrar los detalles de un pedido específico.
+ * <p>
+ * Muestra información como ID del pedido, fecha, cliente, productos adquiridos
+ * y total del pedido. Además, permite generar una impresión (ticket) del pedido.
+ * </p>
+ *
+ * Esta clase interactúa con la base de datos para obtener detalles de productos
+ * vinculados al pedido y permite una representación visual sencilla mediante JavaFX.
+ */
 public class MostrarPedidoController {
 
     @FXML

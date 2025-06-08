@@ -30,6 +30,11 @@ import java.util.Optional;
 import static com.example.qtfood_desktop.Vista.App.loadFXML;
 import static com.example.qtfood_desktop.Vista.App.mostrarAlerta;
 
+/**
+ * Controlador para la gestión de productos y categorías.
+ * Permite visualizar, buscar, añadir, modificar y eliminar productos y categorías.
+ * También permite editar el estado de los productos directamente desde la tabla.
+ */
 public class ProductosController {
     private static ObservableList<Producto> productos= FXCollections.observableArrayList();
     private static ObservableList<Categoria> categorias= FXCollections.observableArrayList();

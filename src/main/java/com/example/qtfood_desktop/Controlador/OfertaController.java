@@ -30,7 +30,15 @@ import java.util.List;
 
 import static com.example.qtfood_desktop.Vista.App.loadFXML;
 import static com.example.qtfood_desktop.Vista.App.mostrarAlerta;
-
+/**
+ * Controlador para la gestión de ofertas en la aplicación.
+ *
+ * Esta clase permite visualizar, buscar, editar, añadir y eliminar ofertas de productos
+ * mediante una tabla interactiva. Ofrece funcionalidades de filtrado por texto y estado,
+ * así como edición directa de fechas y estado desde la tabla.
+ *
+ * Se comunica con la base de datos para mantener los datos sincronizados.
+ */
 public class OfertaController {
 
     private static ObservableList<Oferta> ofertas = FXCollections.observableArrayList();
@@ -158,6 +166,48 @@ public class OfertaController {
 
 
     private void actualizarEstadoOfertaEnBD(int idOferta, String nuevoEstado) {
+        if (nuevoEstado.equalsIgnoreCase("Activo")) {
+            // Verificamos si ya hay otra oferta activa para el mismo producto
+            String sqlVerificacion = """
+            SELECT COUNT(*) AS total
+            FROM oferta o
+            WHERE o.estado = 'Activo'
+              AND o.id_producto = (SELECT id_producto FROM oferta WHERE id_oferta = ?)
+              AND o.id_oferta != ?
+        """;
+
+            try (Connection conexion = App.getConnection();
+                 PreparedStatement stmtVerificacion = conexion.prepareStatement(sqlVerificacion)) {
+
+                stmtVerificacion.setInt(1, idOferta);
+                stmtVerificacion.setInt(2, idOferta);
+
+                try (ResultSet rs = stmtVerificacion.executeQuery()) {
+                    if (rs.next() && rs.getInt("total") > 0) {
+                        mostrarAlerta("Error", "Este producto ya tiene una oferta activa. No se puede activar otra.");
+                        // Revertimos visualmente el cambio
+                        Oferta oferta = tableView.getItems().stream()
+                                .filter(o -> o.getId_Oferta() == idOferta)
+                                .findFirst()
+                                .orElse(null);
+
+                        if (oferta != null) {
+                            // Forzamos la reversión al estado anterior
+                            // Esto supone que el estado anterior era "Inactivo"
+                            oferta.setEstado("Inactivo");
+                            tableView.refresh();
+                        }
+                        return;
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                mostrarAlerta("Error", "Error al verificar ofertas activas para el producto.");
+                return;
+            }
+        }
+
+        // Si no hay otra oferta activa, o si el estado no es "Activo", se actualiza
         String sql = "UPDATE oferta SET estado = ? WHERE id_oferta = ?";
         try (Connection conexion = App.getConnection();
              PreparedStatement stmt = conexion.prepareStatement(sql)) {
@@ -168,6 +218,7 @@ public class OfertaController {
             e.printStackTrace();
         }
     }
+
 
     private void cargarOfertasDesdeBD() {
         ofertas.clear();  // limpiar la lista antes de recargar

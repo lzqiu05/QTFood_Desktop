@@ -22,6 +22,16 @@ import java.sql.SQLException;
 import static com.example.qtfood_desktop.Vista.App.getProductoSeleccionado;
 import static com.example.qtfood_desktop.Vista.App.mostrarAlerta;
 
+/**
+ * Controlador encargado de manejar la modificación de un producto existente.
+ * <p>
+ * Permite modificar los siguientes atributos:
+ * nombre, descripción, precio, stock, categoría e imagen del producto.
+ * Además, se encarga de validar y actualizar los datos en la base de datos.
+ * </p>
+ *
+ * Utiliza JavaFX para la interfaz gráfica y JDBC para operaciones en la base de datos.
+ */
 public class ModificarProductoController {
     @FXML
     private TextField nombreField;

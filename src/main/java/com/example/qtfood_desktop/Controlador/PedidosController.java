@@ -42,6 +42,17 @@ import java.util.stream.Stream;
 
 import static com.example.qtfood_desktop.Vista.App.loadFXML;
 
+/**
+ * Controlador para la gestión de pedidos dentro del sistema.
+ *
+ * Esta clase se encarga de mostrar, filtrar, editar y exportar información relacionada con los pedidos.
+ * Integra una tabla editable con soporte para refresco automático y funcionalidades de búsqueda avanzada.
+ *
+ * También permite exportar pedidos entregados en el último mes en formato PDF.
+ *
+ * Implementa {@link RefreshableController} para controlar el comportamiento de actualización automática
+ * dependiendo del estado de los filtros activos.
+ */
 public class PedidosController implements RefreshableController {
     private static ObservableList<Pedido> datos= FXCollections.observableArrayList();
     @FXML
@@ -71,6 +82,14 @@ public class PedidosController implements RefreshableController {
             refrescoAutomatico.stop();
         }
     }
+
+    @Override
+    public void pararRefresco() {
+        if (refrescoAutomatico != null) {
+            refrescoAutomatico.stop();
+        }
+    }
+
     private void rellenarTabla() {
         String sql = "SELECT p.*, u.nombre AS nombre_usuario " +
                 "FROM pedidos p " +
@@ -124,12 +143,12 @@ public class PedidosController implements RefreshableController {
         crearTabla();
         rellenarTabla();
         tableView.setEditable(true);
-        btnmostrar.setVisible(false);
+        //btnmostrar.setVisible(false);
 
         // Mostrar u ocultar el botón según selección
-        tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+       /* tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             btnmostrar.setVisible(newValue != null);
-        });
+        });*/
 
         // Deseleccionar si se hace clic en una parte vacía de la tabla
         tableView.setOnMousePressed(event -> {
@@ -150,12 +169,14 @@ public class PedidosController implements RefreshableController {
         });
 
 
+        if (refrescoAutomatico != null) {
+            refrescoAutomatico.stop();
+        }
+
         refrescoAutomatico = new Timeline(
                 new KeyFrame(Duration.seconds(5), event -> {
                     if (!filtroActivo) {
                         rellenarTabla();
-                    } else {
-                        refrescoAutomatico.stop(); // Autodetención
                     }
                 })
         );
@@ -257,6 +278,10 @@ public class PedidosController implements RefreshableController {
     @FXML
     private void buscarPedidos() {
         filtroActivo = true;
+        // Detenemos el Timeline explícitamente
+        if (refrescoAutomatico != null) {
+            refrescoAutomatico.stop();
+        }
         boolean fechaVacia = FechaField.getValue() == null || FechaField.getEditor().getText().isEmpty();
         boolean precioVacio = PrecioField.getText().isEmpty();
         boolean estadoVacio = estadoComboBox.getValue() == null;
@@ -448,4 +473,5 @@ public class PedidosController implements RefreshableController {
             new Alert(Alert.AlertType.ERROR, "Error al generar el PDF.").show();
         }
     }
+
 }

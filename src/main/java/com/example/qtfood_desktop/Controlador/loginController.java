@@ -1,6 +1,5 @@
 package com.example.qtfood_desktop.Controlador;
 
-import com.example.qtfood_desktop.BD.Consultas;
 import com.example.qtfood_desktop.Modelo.Admin;
 import com.example.qtfood_desktop.Vista.App;
 import javafx.event.ActionEvent;
@@ -20,6 +19,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Controlador de la vista de inicio de sesión.
+ * <p>
+ * Valida las credenciales de un usuario administrador utilizando un archivo serializado.
+ * Si las credenciales son válidas, redirige a la pantalla principal.
+ * Muestra mensajes de error si la autenticación falla o si los campos están vacíos.
+ * </p>
+ *
+ * Utiliza JavaFX para la interfaz gráfica.
+ */
 public class loginController {
     @FXML
     private Label generalError;

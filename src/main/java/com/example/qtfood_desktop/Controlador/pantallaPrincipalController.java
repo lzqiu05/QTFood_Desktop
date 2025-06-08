@@ -8,6 +8,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.BorderPane;
@@ -61,7 +63,11 @@ public class pantallaPrincipalController {
 
     @FXML
     private void initialize() {
-
+        try {
+            loadFXML(getClass().getResource("/com/example/qtfood_desktop/Vistas/PedidoSearch.fxml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     private void loadFXML(URL url) throws IOException {
         // Desactivar el controlador actual si existe
@@ -140,6 +146,9 @@ public class pantallaPrincipalController {
     
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
+            if (controllerActual != null) {
+                controllerActual.pararRefresco();
+            }
             App.setRoot("Login");
         }
     }

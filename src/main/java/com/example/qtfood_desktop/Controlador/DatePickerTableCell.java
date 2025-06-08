@@ -12,7 +12,15 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
 import java.time.LocalDate;
-
+/**
+ * Celda personalizada para una {TableView} que permite la edición directa de fechas mediante un {@link DatePicker}.
+ * <p>
+ * Esta celda se activa con doble clic y permite seleccionar una fecha desde un control gráfico.
+ * Al perder el foco, se cancela la edición si no se ha confirmado.
+ * </p>
+ *
+ * @param <S> el tipo del objeto (fila) al que pertenece la celda.
+ */
 public class DatePickerTableCell<S> extends TableCell<S, LocalDate> {
     private final DatePicker datePicker;
 

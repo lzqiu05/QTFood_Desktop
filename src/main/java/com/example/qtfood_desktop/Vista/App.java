@@ -18,6 +18,11 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.sql.*;
 
+/**
+ * Clase principal de la aplicación QTFood basada en JavaFX.
+ * Gestiona la conexión a la base de datos, la navegación entre vistas
+ * y el control de objetos globales como el usuario, pedido y producto seleccionados.
+ */
 public class App extends Application {
     private static Scene scene;
     private static final String URL = "jdbc:mysql://localhost:3306/qtfood2";

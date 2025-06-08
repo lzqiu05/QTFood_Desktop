@@ -41,6 +41,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Controlador para la gestión de reservas.
+ * Permite ver, filtrar, editar estados y exportar reservas finalizadas a PDF.
+ * Maneja reservas confirmadas y pendientes con refresco automático.
+ */
 public class ReservaController implements RefreshableController {
 
     @FXML
@@ -81,6 +86,14 @@ public class ReservaController implements RefreshableController {
             System.out.println("Timeline de reservas DESACTIVADO");
         }
     }
+
+    @Override
+    public void pararRefresco() {
+        if (refrescoAutomatico != null) {
+            refrescoAutomatico.stop();
+        }
+    }
+
     @FXML
     private void initialize() {
         crearTablaReservasConfirmadas();
