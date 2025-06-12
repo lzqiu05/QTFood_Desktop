@@ -1,0 +1,4 @@
+module:com.example.qtfood_desktop
+com.example.qtfood_desktop.Controlador
+com.example.qtfood_desktop.Modelo
+com.example.qtfood_desktop.Vista

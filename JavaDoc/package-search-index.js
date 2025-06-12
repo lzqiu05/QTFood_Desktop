@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"m":"com.example.qtfood_desktop","l":"com.example.qtfood_desktop.Controlador"},{"m":"com.example.qtfood_desktop","l":"com.example.qtfood_desktop.Modelo"},{"m":"com.example.qtfood_desktop","l":"com.example.qtfood_desktop.Vista"}];updateSearchResults();

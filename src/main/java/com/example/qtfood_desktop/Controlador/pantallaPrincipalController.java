@@ -164,7 +164,7 @@ public class pantallaPrincipalController {
                     new FileChooser.ExtensionFilter("Archivo SQL", "*.sql")
             );
             fileChooser.setInitialFileName("Copia_seguridad.sql("+hoy+")");
-            fileChooser.setInitialDirectory(new File("C:\\Users\\Liang Zhi\\Desktop\\s\\Copias de seguridad"));
+            fileChooser.setInitialDirectory(new File("Copias de seguridad"));
             File file = fileChooser.showSaveDialog(((Node) event.getSource()).getScene().getWindow());
             if (file == null) {
                 System.out.println("Operación cancelada por el usuario.");
@@ -198,7 +198,7 @@ public class pantallaPrincipalController {
             fileChooser.getExtensionFilters().add(
                     new FileChooser.ExtensionFilter("Archivos SQL", "*.sql")
             );
-            fileChooser.setInitialDirectory(new File("C:\\Users\\Liang Zhi\\Desktop\\s\\Copias de seguridad"));
+            fileChooser.setInitialDirectory(new File("Copias de seguridad"));
 
             File file = fileChooser.showOpenDialog(((Node) event.getSource()).getScene().getWindow());
 

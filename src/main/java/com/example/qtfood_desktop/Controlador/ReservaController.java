@@ -432,7 +432,7 @@ public class ReservaController implements RefreshableController {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivo PDF", "*.pdf"));
         fileChooser.setInitialFileName("reservas_finalizadas.pdf ("+haceUnMes+" - "+hoy+")");
 
-        fileChooser.setInitialDirectory(new File("C:\\Users\\Liang Zhi\\Desktop\\s"));
+        fileChooser.setInitialDirectory(new File("Registrro de reservas"));
         File file = fileChooser.showSaveDialog(((Node) actionEvent.getSource()).getScene().getWindow());
         if (file == null) return;
 

@@ -78,6 +78,7 @@ public class ModificarProductoController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Seleccionar nueva imagen del producto");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Imágenes", "*.jpg", "*.png"));
+        fileChooser.setInitialDirectory(new File("C:\\Users\\Liang Zhi\\Desktop\\s\\Imagenes"));
         imagenSeleccionada = fileChooser.showOpenDialog(nombreField.getScene().getWindow());
 
         if (imagenSeleccionada != null) {
@@ -119,9 +120,9 @@ public class ModificarProductoController {
             String urlImagenFinal = imagenUrlExistente;
             if (imagenSeleccionada != null) {
                 String nombreImagen = imagenSeleccionada.getName();
-                File destino = new File("C:/xampp/htdocs/imagenes/" + nombreImagen);
+                File destino = new File("C:/xampp/htdocs/QTFood/imagenes/" + nombreImagen);
                 Files.copy(imagenSeleccionada.toPath(), destino.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                urlImagenFinal = "http://localhost/imagenes/" + nombreImagen;
+                urlImagenFinal = "http://localhost/QTFood/imagenes/" + nombreImagen;
             }
 
             // Actualizar producto

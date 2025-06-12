@@ -412,7 +412,7 @@ public class PedidosController implements RefreshableController {
         fileChooser.setInitialFileName("pedidos_entregados.pdf ("+haceUnMes+" - "+hoy+")");
 
         // Directorio por defecto (puedes cambiar esta ruta)
-        fileChooser.setInitialDirectory(new File("C:\\Users\\Liang Zhi\\Desktop\\s"));
+        fileChooser.setInitialDirectory(new File("Registro de pedidos "));
 
         File file = fileChooser.showSaveDialog(((Node) actionEvent.getSource()).getScene().getWindow());
         if (file == null) return;

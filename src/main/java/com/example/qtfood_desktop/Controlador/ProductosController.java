@@ -227,7 +227,7 @@ public class ProductosController {
         colStock.prefWidthProperty().bind(productosTableView.widthProperty().multiply(0.10));
         colImagen.prefWidthProperty().bind(productosTableView.widthProperty().multiply(0.17));
         colCategoria.prefWidthProperty().bind(productosTableView.widthProperty().multiply(0.15));
-        colEstado.prefWidthProperty().bind(productosTableView.widthProperty().multiply(0.15));
+        colEstado.prefWidthProperty().bind(productosTableView.widthProperty().multiply(0.140));
         colEstado.setCellFactory(ComboBoxTableCell.forTableColumn("ACTIVO", "INACTIVO"));
         colEstado.setOnEditCommit(event -> {
             Producto producto = event.getRowValue();

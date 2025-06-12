@@ -66,6 +66,7 @@ public class AñadirProductoController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Seleccionar imagen del producto");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Imágenes", "*.jpg", "*.png"));
+        fileChooser.setInitialDirectory(new File("C:\\Users\\Liang Zhi\\Desktop\\s\\Imagenes"));
         imagenSeleccionada = fileChooser.showOpenDialog(nombreField.getScene().getWindow());
 
         if (imagenSeleccionada != null) {
@@ -114,9 +115,9 @@ public class AñadirProductoController {
             String urlImagen = "";
             if (imagenSeleccionada != null) {
                 String nombreImagen = imagenSeleccionada.getName();
-                File destino = new File("C:/xampp/htdocs/imagenes/" + nombreImagen);
+                File destino = new File("C:/xampp/htdocs/QTFood/imagenes/" + nombreImagen);
                 Files.copy(imagenSeleccionada.toPath(), destino.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                urlImagen = "http://localhost/imagenes/" + nombreImagen;
+                urlImagen = "http://localhost/QTFood/imagenes/" + nombreImagen;
             }
 
             String sql = "INSERT INTO productos(nombre, descripcion, precio, stock, imagen_url, id_categoria, estado) VALUES (?, ?, ?, ?, ?, ?, ?)";
